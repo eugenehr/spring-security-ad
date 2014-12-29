@@ -126,13 +126,11 @@ public class ADUserDetailsService implements UserDetailsService, AuthenticationP
         this.userSearchBase = userSearchBase;
         if (userSuffix == null && userSearchBase != null) {
             // If userSuffix is not set then determine it from searchBase
-            final Pattern pattern = Pattern.compile("dc\\s*=\\s*(.+)", Pattern.CASE_INSENSITIVE);
+            final Pattern pattern = Pattern.compile("dc\\s*=\\s*([^,]+)", Pattern.CASE_INSENSITIVE);
             userSuffix = "";
-            for (String part : userSearchBase.split(",")) {
-                final Matcher matcher = pattern.matcher(part);
-                if (matcher.matches()) {
-                    userSuffix += (userSuffix.isEmpty() ? "@" : ".") + matcher.group(1);
-                }
+            final Matcher matcher = pattern.matcher(userSearchBase);
+            while (matcher.find()) {
+                userSuffix += (userSuffix.isEmpty() ? "@" : ".") + matcher.group(1);
             }
         }
     }
